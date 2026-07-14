@@ -1,0 +1,4 @@
+[filetype]
+rules = [
+  { url = "*/", fg = "lightgreen" },
+]

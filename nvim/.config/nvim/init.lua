@@ -184,6 +184,16 @@ require("lazy").setup({
     config = function(_, opts)
       require("showkeys").setup(opts)
       require("showkeys").open()
+
+      local utils = require("showkeys.utils")
+      local state = require("showkeys.state")
+      local _clear_and_close = utils.clear_and_close
+      utils.clear_and_close = function()
+        if not state.win then
+          return
+        end
+        _clear_and_close()
+      end
     end,
   },
 })

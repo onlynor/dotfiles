@@ -18,6 +18,10 @@ emacs/.config/emacs/eln-cache/
 # Auto-save list (runtime state)
 emacs/.config/emacs/auto-save-list/
 
+# zsh,bash
+shell/.zshrc
+shell/.bashrc
+
 # --- Vim ---
 # Netrw directory browsing history
 vim/.vim/.netrwhist

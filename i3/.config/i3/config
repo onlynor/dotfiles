@@ -59,8 +59,15 @@ bindsym $mod+Return exec --no-startup-id alacritty
 # kill focused window
 bindsym $mod+Shift+q kill
 
-# win+l锁屏，显示壁纸
-bindsym Mod4+l exec i3lock -i /usr/share/backgrounds/Fuwafuwa_nanbatto_san_by_amaral-dark.png
+# win+l锁屏并熄屏
+bindsym Mod4+l exec i3lock -i /usr/share/backgrounds/Fuwafuwa_nanbatto_san_by_amaral-dark.png & sleep 1 && xset dpms force off
+
+# 截图快捷键 (需要安装 flameshot: sudo apt install flameshot)
+# PrtSc / Win+Shift+S: 选区截图
+bindsym Print exec env XDG_SESSION_TYPE=X11 QT_QPA_PLATFORM=xcb flameshot gui
+bindsym Mod4+Shift+s exec env XDG_SESSION_TYPE=X11 QT_QPA_PLATFORM=xcb flameshot gui
+# Shift+PrtSc: 全屏截图保存到 ~/Pictures
+bindsym Shift+Print exec env XDG_SESSION_TYPE=X11 QT_QPA_PLATFORM=xcb flameshot full -p ~/Pictures
 # feh加载壁纸
 exec --no-startup-id feh --bg-fill /usr/share/backgrounds/osselo-Ask_a_friend.jpg
 
@@ -176,7 +183,7 @@ for_window [class="Emacs"] layout stacking
 for_window [class="firefox"] layout stacking
 for_window [class="Firefox"] layout stacking
 assign [class="v2rayN"] → workspace number $ws9
-for_window [class="v2rayN"] floating enable, border normal, resize set 900 700
+for_window [class="v2rayN"] floating enable, border normal
 
 
 # resize window (you can also use the mouse for that)

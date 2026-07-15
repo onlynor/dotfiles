@@ -32,8 +32,26 @@ size = 10
 [font.normal]
 family = "FiraCode Nerd Font Mono"
 
+[selection]
+save_to_clipboard = true
+
 [cursor]
 style = { shape = "Block" }
+
+[mouse]
+# NOTE: Left click bound to Copy may interfere with text selection (click-drag).
+# If left-drag selection stops working, remove the Left binding and rely on
+# [selection] save_to_clipboard = true above to auto-copy on select.
+bindings = [
+  { mouse = "Left",  action = "Copy" },
+  { mouse = "Right", action = "PasteSelection" },
+]
+
+[keyboard]
+bindings = [
+  { key = "C", mods = "Control|Shift", action = "Copy" },
+  { key = "V", mods = "Control|Shift", action = "Paste" },
+]
 
 [window]
 dimensions = { columns = 85, lines = 20 }

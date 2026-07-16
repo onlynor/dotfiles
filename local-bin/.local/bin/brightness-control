@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+action="$1"
+output="eDP-1"
+
+# 获取当前亮度
+cur=$(xrandr --verbose --current | grep "$output" -A5 | grep Brightness | awk '{print $2}')
+[ -z "$cur" ] && cur=1.0
+
+case "$action" in
+  up)
+    new=$(echo "$cur + 0.05" | bc)
+    [ "$(echo "$new > 1.0" | bc)" -eq 1 ] && new=1.0
+    ;;
+  down)
+    new=$(echo "$cur - 0.05" | bc)
+    [ "$(echo "$new < 0.05" | bc)" -eq 1 ] && new=0.05
+    ;;
+  max)
+    new=1.0
+    ;;
+  min)
+    new=0.05
+    ;;
+  *)
+    echo "用法: brightness-control {up|down|max|min}"
+    exit 1
+    ;;
+esac
+
+xrandr --output "$output" --brightness "$new"
+pct=$(echo "$new * 100 / 1" | bc)
+dunstify -r 9993 "󰃟 亮度: ${pct}%" -h int:value:"$pct"

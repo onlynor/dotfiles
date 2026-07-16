@@ -1,0 +1,5 @@
+#!/bin/bash
+exec /usr/bin/chafa "$@" \
+  --symbols block+space+border+diagonal+half+quad+braille \
+  --colors full \
+  --dither diffusion

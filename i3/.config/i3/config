@@ -177,11 +177,6 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
-# Default layout: tabbed for specific applications
-for_window [class="Code"] layout stacking
-for_window [class="Emacs"] layout stacking
-for_window [class="firefox"] layout stacking
-for_window [class="Firefox"] layout stacking
 assign [class="v2rayN"] → workspace number $ws9
 for_window [class="v2rayN"] floating enable, border normal
 

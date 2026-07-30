@@ -13,6 +13,11 @@ order += "cpu_temperature 0"
 order += "memory"
 order += "tztime local"
 
+ipv6 {
+    format_up = "%ipv6"
+    format_down = "IPv6: down"
+}
+
 wireless _first_ {
         format_up = "W: %signal"
         format_down = "W: down"
@@ -46,5 +51,5 @@ memory {
 }
 
 tztime local {
-        format = "%Y-%m-%d %H:%M:%S"
+        format = "%a %Y-%m-%d %H:%M:%S"
 }

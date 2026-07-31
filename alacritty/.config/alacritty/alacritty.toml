@@ -47,11 +47,20 @@ bindings = [
   { mouse = "Right", action = "PasteSelection" },
 ]
 
-[keyboard]
-bindings = [
-  { key = "C", mods = "Control|Shift", action = "Copy" },
-  { key = "V", mods = "Control|Shift", action = "Paste" },
-]
-
 [window]
 dimensions = { columns = 85, lines = 20 }
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Control|Shift"
+action = "Copy"
+
+[[keyboard.bindings]]
+key = "V"
+mods = "Control|Shift"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\r"

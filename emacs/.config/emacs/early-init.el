@@ -8,4 +8,5 @@
 (add-to-list 'default-frame-alist '(height . 35))
 
 ;; Dark background before theme loads — prevents white flash
-(add-to-list 'default-frame-alist '(background-color . "#2d3743"))
+;; Match gruber-darker default bg to avoid flicker
+(add-to-list 'default-frame-alist '(background-color . "#1a1a1a"))

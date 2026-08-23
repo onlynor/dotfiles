@@ -1,4 +1,4 @@
-;;; early-init.el --- Early bird configuration
+;;; early-init.el --- Early bird configuration  -*- lexical-binding: t -*-
 
 ;; Run before frame is created — fullscreen is smooth here
 (add-to-list 'default-frame-alist

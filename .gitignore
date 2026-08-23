@@ -17,6 +17,12 @@ emacs/.config/emacs/elpa/
 emacs/.config/emacs/eln-cache/
 # Auto-save list (runtime state)
 emacs/.config/emacs/auto-save-list/
+# Ido minibuffer history (runtime state, machine-specific paths)
+emacs/.config/emacs/ido.last
+# url package cache (cookies, cache dir)
+emacs/.config/emacs/url/
+# Custom-set-variables file (auto-generated, machine-specific)
+emacs/.config/emacs/custom.el
 
 # zsh,bash
 shell/.zshrc

@@ -2,9 +2,14 @@ set $mod Mod4
 
 font pango:monospace 12
 
+# 屏幕护眼/清晰度：校正 DPI + 消除撕裂 + 降低蓝光
+exec --no-startup-id xrdb -merge ~/.Xresources
+exec --no-startup-id picom --backend glx --vsync -b
+exec --no-startup-id gammastep -m randr -l 31.23:121.47 -t 6500:3800
+
 # idle/lock
-exec --no-startup-id xset s 900 900
-exec --no-startup-id xset dpms 0 0 900
+exec --no-startup-id xset s 1800 1800
+exec --no-startup-id xset dpms 0 0 1800
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork -i /usr/share/backgrounds/Fuwafuwa_nanbatto_san_by_amaral-dark.png
 
 # startup
@@ -156,8 +161,8 @@ for_window [class="scratchpad"] move scratchpad, resize set 800 500, floating en
 bindsym $mod+Shift+minus scratchpad show
 
 bar {
-    position top
+    position bottom
     font pango:monospace 11
-    status_command env LC_TIME=C i3status -c ~/.config/i3status/config
+    status_command env LC_TIME=C i3status
     tray_output primary
 }

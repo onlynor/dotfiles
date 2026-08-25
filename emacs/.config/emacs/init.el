@@ -59,6 +59,35 @@
 (set-cursor-color "#DAA520")
 (setq-default cursor-type 'box)
 
+;;; PATH — a GUI Emacs inherits the desktop session's PATH, not the shell's,
+;;; so language servers installed per-user are invisible without this.
+(dolist (dir '("~/go/bin" "/usr/local/go/bin" "~/.cargo/bin" "~/.local/bin"))
+  (let ((d (expand-file-name dir)))
+    (when (file-directory-p d)
+      (add-to-list 'exec-path d)
+      (setenv "PATH" (concat d path-separator (getenv "PATH"))))))
+
+;;; Tree-sitter — highlighting for languages Emacs ships no classic mode for.
+;;; Grammars live in ~/.config/emacs/tree-sitter; install missing ones with
+;;; M-x treesit-install-language-grammar.
+(when (and (require 'treesit nil t) (treesit-available-p))
+  (setq treesit-language-source-alist
+        '((go         . ("https://github.com/tree-sitter/tree-sitter-go"))
+          (gomod      . ("https://github.com/camdencheek/tree-sitter-go-mod"))
+          (rust       . ("https://github.com/tree-sitter/tree-sitter-rust"))
+          (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" nil "typescript/src"))
+          (tsx        . ("https://github.com/tree-sitter/tree-sitter-typescript" nil "tsx/src"))))
+
+  ;; Only claim a file extension when the grammar is actually built, so a
+  ;; missing grammar degrades to fundamental-mode instead of erroring.
+  (dolist (entry '(("\\.go\\'"     go         go-ts-mode)
+                   ("/go\\.mod\\'" gomod      go-mod-ts-mode)
+                   ("\\.rs\\'"     rust       rust-ts-mode)
+                   ("\\.ts\\'"     typescript typescript-ts-mode)
+                   ("\\.tsx\\'"    tsx        tsx-ts-mode)))
+    (when (treesit-ready-p (nth 1 entry) t)
+      (add-to-list 'auto-mode-alist (cons (nth 0 entry) (nth 2 entry))))))
+
 ;;; Editing
 (setq-default indent-tabs-mode nil
               tab-width 2
@@ -89,14 +118,21 @@
 ;;; Compile
 (setq compilation-scroll-output t)
 
-;;; Completion — company, TAB to indent or complete
+;;; Completion — company pops up as you type, like VS Code.
+;;; TAB cycles candidates, RET accepts the selected one.
 (rc/package-ensure 'company)
-(setq company-idle-delay 0.2
-      company-minimum-prefix-length 2)
+(setq company-idle-delay 0.1
+      company-minimum-prefix-length 1
+      company-selection-wrap-around t
+      company-tooltip-align-annotations t
+      ;; Complete plain prose only on demand, not while writing text.
+      company-dabbrev-downcase nil)
 (global-company-mode 1)
 (with-eval-after-load 'company
   (define-key company-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-  (define-key company-active-map (kbd "TAB") #'company-complete-common-or-cycle))
+  (define-key company-active-map (kbd "TAB") #'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "RET") #'company-complete-selection)
+  (define-key company-active-map [return] #'company-complete-selection))
 
 ;;; Eglot — start a language server only when one is actually installed,
 ;;; so languages without a server just fall back to plain company.

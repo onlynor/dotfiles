@@ -15,6 +15,9 @@ Thumbs.db
 emacs/.config/emacs/elpa/
 # Native compiled elisp cache (auto-generated, platform-specific)
 emacs/.config/emacs/eln-cache/
+# Compiled tree-sitter grammars (platform-specific, rebuilt via
+# M-x treesit-install-language-grammar)
+emacs/.config/emacs/tree-sitter/
 # Auto-save list (runtime state)
 emacs/.config/emacs/auto-save-list/
 # Ido minibuffer history (runtime state, machine-specific paths)

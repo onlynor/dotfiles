@@ -88,10 +88,21 @@
     (when (treesit-ready-p (nth 1 entry) t)
       (add-to-list 'auto-mode-alist (cons (nth 0 entry) (nth 2 entry))))))
 
-;;; Editing
+;;; Editing — each language keeps its own convention; the defaults below
+;;; only apply to modes that don't set their own (Python 4, Rust 4, ...).
 (setq-default indent-tabs-mode nil
               tab-width 2
               c-basic-offset 2)
+
+;; Go is the exception: gofmt indents with one real TAB per level.
+;; go-ts-mode's offset is 8 columns while tab-width above is 2, which made
+;; it emit *four* tabs per level — pin the two together so 1 level = 1 tab.
+(defun rc/go-indent ()
+  (setq-local indent-tabs-mode t
+              tab-width 4
+              go-ts-mode-indent-offset 4))
+(add-hook 'go-ts-mode-hook #'rc/go-indent)
+(add-hook 'go-mod-ts-mode-hook #'rc/go-indent)
 (electric-pair-mode 1)
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 (setq scroll-margin 5

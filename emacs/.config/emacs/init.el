@@ -173,6 +173,51 @@
 ;;; Project
 (global-set-key (kbd "C-c p f") #'project-find-file)
 
+;;; Dired — the stock header repeats the filesystem's free space ("available
+;;; 70.0 GiB") in every directory, which says nothing about the directory you
+;;; are in.  Drop it and show that directory's own size instead, computed with
+;;; du in a subprocess so a huge tree never blocks Emacs.
+(setq dired-free-space nil)
+
+(defvar-local rc/dired-size nil
+  "Human-readable size of this Dired buffer's directory, or nil.")
+
+(defun rc/dired-header ()
+  "Render the directory and its size in the header line."
+  (setq-local header-line-format
+              (concat " " (abbreviate-file-name default-directory)
+                      (and rc/dired-size (concat "  —  " rc/dired-size)))))
+
+(defun rc/dired-du ()
+  "Measure `default-directory' with du, then refresh the header line."
+  (when (and (derived-mode-p 'dired-mode)
+             (not (file-remote-p default-directory))
+             (file-directory-p default-directory))
+    (setq rc/dired-size "…")
+    (rc/dired-header)
+    (let ((buf (current-buffer)))
+      (make-process
+       :name "dired-du" :noquery t
+       :buffer (generate-new-buffer " *dired-du*")
+       ;; 2>/dev/null: unreadable subdirectories are normal, not worth reporting
+       :command (list "sh" "-c"
+                      (format "du -sh %s 2>/dev/null"
+                              (shell-quote-argument
+                               (expand-file-name default-directory))))
+       :sentinel
+       (lambda (proc _event)
+         (unless (process-live-p proc)
+           (let ((out (with-current-buffer (process-buffer proc) (buffer-string))))
+             (kill-buffer (process-buffer proc))
+             (when (buffer-live-p buf)
+               (with-current-buffer buf
+                 (setq rc/dired-size
+                       (if (string-match "\\`[ \t]*\\([^ \t\n]+\\)" out)
+                           (match-string 1 out)
+                         "?"))
+                 (rc/dired-header))))))))))
+(add-hook 'dired-after-readin-hook #'rc/dired-du)
+
 ;;; Org mode
 (add-hook 'org-mode-hook #'visual-line-mode)
 

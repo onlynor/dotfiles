@@ -26,10 +26,23 @@ emacs/.config/emacs/ido.last
 emacs/.config/emacs/url/
 # Custom-set-variables file (auto-generated, machine-specific)
 emacs/.config/emacs/custom.el
+# matugen 根据壁纸生成的主题（机器相关，派生文件）
+emacs/.config/emacs/themes/
 
-# zsh,bash
-shell/.zshrc
-shell/.bashrc
+
+# --- Rofi ---
+# dms-theme-sync 维护的符号链接（运行时状态，指向 theme-light/dark.rasi）
+rofi/.config/rofi/theme-active.rasi
+
+# --- Alacritty ---
+# matugen 根据壁纸生成的配色（机器相关，派生文件）
+alacritty/.config/alacritty/dank-theme.toml
+# dms setup 覆写配置前留的备份
+alacritty/.config/alacritty/alacritty.toml.backup.*
+
+# --- Misc ---
+# 独立的 git 仓库，不作为本仓库的子模块管理
+config-files/
 
 # --- Vim ---
 # Netrw directory browsing history

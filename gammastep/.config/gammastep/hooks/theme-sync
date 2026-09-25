@@ -1,0 +1,76 @@
+#!/bin/sh
+# gammastep hook（见 man gammastep 的 HOOKS 一节）
+# gammastep 在时段切换（以及启动时）调用：$1=事件 $2=旧时段 $3=新时段
+# daytime -> 浅色，night -> 深色；transition/none 不动（避免过渡期间抖动、
+# 以及 gammastep 退出时触发的 "->none" 把已生效的主题又改掉）。
+#
+# 依次做：
+#   1) GTK 浅/深色主题（gsettings 走 dconf；同时写 settings.ini 兜底非 dconf 场景）
+#   2) i3 reload
+#
+# rofi 主题不再由这里驱动：niri+DMS 下改由 dms-rofi-theme-sync 跟随 DMS
+# 自己的浅/深色模式切换（见 ~/.local/bin/dms-rofi-theme-sync）。
+
+set -u
+
+event=$1
+new_period=${3:-}
+
+[ "$event" = "period-changed" ] || exit 0
+
+case "$new_period" in
+	daytime) mode=light ;;
+	night)   mode=dark ;;
+	*)       exit 0 ;;
+esac
+
+state_file="$HOME/.local/state/gammastep-theme"
+mkdir -p "$(dirname "$state_file")"
+if [ -f "$state_file" ] && [ "$(cat "$state_file")" = "$mode" ]; then
+	exit 0
+fi
+
+# 保留用户当前选的强调色变体（如 Yaru-prussiangreen），只切 -dark 后缀
+base_theme=Yaru
+if command -v gsettings >/dev/null 2>&1; then
+	current=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'")
+	[ -n "$current" ] && base_theme=${current%-dark}
+fi
+
+if [ "$mode" = dark ]; then
+	gtk_theme="${base_theme}-dark"
+	[ -d "/usr/share/themes/$gtk_theme" ] || gtk_theme="$base_theme"
+	color_scheme=prefer-dark
+	prefer_dark=1
+else
+	gtk_theme="$base_theme"
+	color_scheme=default
+	prefer_dark=0
+fi
+
+# 1) GTK 主题
+if command -v gsettings >/dev/null 2>&1; then
+	gsettings set org.gnome.desktop.interface gtk-theme "$gtk_theme" 2>/dev/null
+	gsettings set org.gnome.desktop.interface color-scheme "$color_scheme" 2>/dev/null
+fi
+for d in "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"; do
+	mkdir -p "$d"
+	cat > "$d/settings.ini" <<EOF
+[Settings]
+gtk-theme-name=$gtk_theme
+gtk-application-prefer-dark-theme=$prefer_dark
+EOF
+done
+
+# 2) i3 reload
+command -v i3-msg >/dev/null 2>&1 && i3-msg reload >/dev/null 2>&1
+
+echo "$mode" > "$state_file"
+
+if command -v notify-send >/dev/null 2>&1; then
+	label=浅色; [ "$mode" = dark ] && label=深色
+	notify-send -a Gammastep -i preferences-desktop-theme \
+		"主题已切换为$label" "gtk=$gtk_theme  时段=$new_period" 2>/dev/null
+fi
+
+exit 0

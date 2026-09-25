@@ -1,0 +1,32 @@
+// 深色配色，由 gammastep hook 在夜间(night)切换时指向此文件
+// （通过 theme-active.rasi 的符号链接，被 config.rasi @import）
+//
+// 只写 `* {}` 是不够的：rofi 内置默认主题给 entry/prompt/
+// case-indicator 显式设了 text-color（继承自它自己的 foreground
+// 变量，是配浅色背景用的），显式属性优先于 `*` 通配，所以这里对
+// 输入框相关的每个 widget 都单独覆盖一遍，而不是只指望 `*` 生效。
+
+* {
+    background-color:  #1e1e2eee;
+    text-color:         #cdd6f4;
+    border-color:       #45475a;
+    placeholder-color:  #7f849c;
+}
+
+window {
+    background-color: #1e1e2eee;
+    border-color:      #45475a;
+}
+
+entry, prompt, case-indicator, textbox-prompt-colon {
+    text-color: #cdd6f4;
+}
+
+element {
+    text-color: #cdd6f4;
+}
+
+element selected {
+    background-color: #45475a;
+    text-color:         #89b4fa;
+}

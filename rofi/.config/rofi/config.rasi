@@ -1,5 +1,10 @@
 // rofi launcher, bound to $mod+d
 
+// 浅/深色配色。theme-active.rasi 是符号链接，由 gammastep 的
+// theme-sync hook 在 daytime/night 切换时重新指向 theme-light.rasi
+// 或 theme-dark.rasi（见 ~/.config/gammastep/hooks/theme-sync）。
+@import "/home/matthew/.config/rofi/theme-active.rasi"
+
 configuration {
     modi: "drun,run,window";
     show-icons: true;

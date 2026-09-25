@@ -5,11 +5,15 @@ font pango:monospace 12
 # 屏幕护眼/清晰度：校正 DPI + 消除撕裂 + 降低蓝光
 exec --no-startup-id xrdb -merge ~/.Xresources
 exec --no-startup-id picom --backend glx --vsync -b
-exec --no-startup-id gammastep -m randr -l 31.23:121.47 -t 6500:3800
+# 色温 + 昼夜主题切换（配置/hooks 见 ~/.config/gammastep）。
+# 系统时区仍是 America/Los_Angeles，这里单独给 gammastep 指定
+# TZ=Asia/Shanghai，让 config.ini 里的 dawn-time/dusk-time(08:00/18:00)
+# 按上海时间算，不受系统时区影响。
+exec --no-startup-id env TZ=Asia/Shanghai gammastep
 
 # idle/lock
-exec --no-startup-id xset s 1800 1800
-exec --no-startup-id xset dpms 0 0 1800
+exec --no-startup-id xset s 2700 2700
+exec --no-startup-id xset dpms 0 0 2700
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork -i /usr/share/backgrounds/Fuwafuwa_nanbatto_san_by_amaral-dark.png
 
 # startup
@@ -18,6 +22,12 @@ exec --no-startup-id nm-applet
 exec --no-startup-id fcitx5 -d
 exec --no-startup-id env GTK_THEME=Yaru dunst
 exec --no-startup-id feh --bg-fill /home/matthew/图片/wallpaper/i3wallpaper.png
+
+# touchpad: 轻触点击(单指=左键) + 双指轻触=右键 (libinput tapping)
+# 按设备名称而非数字 id 设置，避免重启后 id 变化导致失效
+# 注: 映射属性不接受字符串 "lrm"，需写布尔值 1 0（第1位=lrm, 第2位=lmr）
+exec --no-startup-id xinput set-prop "SYNA2BA6:00 06CB:CE78 Touchpad" "libinput Tapping Enabled" 1
+exec --no-startup-id xinput set-prop "SYNA2BA6:00 06CB:CE78 Touchpad" "libinput Tapping Button Mapping Enabled" 1 0
 
 # media keys
 set $refresh_i3status killall -SIGUSR1 i3status

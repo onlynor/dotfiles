@@ -1,0 +1,7 @@
+! 屏幕物理 DPI 约 142（1920x1080 / 15.6 英寸屏），X11 默认 96dpi 导致字体偏小、渲染发糊
+! 按 Windows 125% 档位（120dpi）校正，比 150% 更保守，Firefox 等按系统 dpi 直接换算页面缩放的程序不会跳太多
+Xft.dpi: 120
+Xft.antialias: 1
+Xft.hinting: 1
+Xft.hintstyle: hintslight
+Xft.rgba: rgb

@@ -31,7 +31,7 @@ emacs/.config/emacs/themes/
 
 
 # --- Rofi ---
-# dms-theme-sync 维护的符号链接（运行时状态，指向 theme-light/dark.rasi）
+# system-theme-sync 维护的符号链接（运行时状态，指向 theme-light/dark.rasi）
 rofi/.config/rofi/theme-active.rasi
 
 # --- Alacritty ---

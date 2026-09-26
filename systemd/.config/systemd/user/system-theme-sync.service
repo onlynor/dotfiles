@@ -1,0 +1,6 @@
+[Unit]
+Description=Sync rofi and GTK theme variant with Noctalia's light/dark mode
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/system-theme-sync

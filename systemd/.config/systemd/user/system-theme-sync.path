@@ -1,0 +1,8 @@
+[Unit]
+Description=Watch Noctalia's generated GTK colors for theme changes
+
+[Path]
+PathModified=%h/.config/gtk-3.0/noctalia.css
+
+[Install]
+WantedBy=default.target

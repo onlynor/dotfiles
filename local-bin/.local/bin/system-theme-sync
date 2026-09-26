@@ -1,30 +1,26 @@
 #!/bin/sh
-# 让系统级的浅/深色主题（rofi、GTK 应用如 Firefox）跟随 DMS
-# （DankMaterialShell）自己的主题模式，而不是 gammastep 的白天/夜晚时段。
+# 让 rofi 和 Yaru 的浅/深色主题变体跟随 Noctalia 的主题模式。
 #
-# 由 systemd --user 的 dms-theme-sync.path 单元在
-# ~/.cache/DankMaterialShell/dms-colors.json 变化时触发（DMS 每次切换
-# 主题——包括开启了"按位置自动切换"时——都会由 matugen 重新生成这个
-# 文件，其中的 mode 字段是当前浅/深色模式最可靠的来源；
-# session.json 的 isLightMode 字段在自动模式下反而会被清空，不可靠）。
+# 由 systemd --user 的 system-theme-sync.path 单元在
+# ~/.config/gtk-3.0/noctalia.css 变化时触发（Noctalia 每次重新生成
+# 配色——包括开启了"按日出日落自动切换"时——都会重写这个文件，
+# 用它当"主题刚刚变过"的信号；真正的当前浅/深色状态用
+# `noctalia msg theme-mode-get` 直接问 Noctalia 本体，比解析文件可靠）。
 #
-# 这部分逻辑原来由 gammastep 的 hooks/theme-sync 负责（跟着它自己的
-# 白天/夜晚时段走），迁移到 niri+DMS 后 gammastep 不再常驻运行，
-# 所以这里改为跟 DMS 自己的判断同步：
+# Noctalia 自带的 gtk3/gtk4 模板只会同步 color-scheme 这个"偏好"和写
+# noctalia.css 配色，不会切换实际加载的 GTK 主题包（它只认识
+# adw-gtk3/-dark，这台机器装的是 Yaru），所以这里只补 Noctalia 不管的
+# 两件事：
 #   1) rofi：切换 theme-active.rasi 指向的目标
 #   2) GTK 主题：在 Yaru 的浅色/-dark 变体间切换，并写 gtk-3.0/4.0
-#      的 settings.ini（DMS 只会同步 color-scheme 这个"偏好"，不会
-#      切换实际加载的 GTK 主题包，Firefox 等原生 GTK 应用看的是后者）
+#      的 settings.ini（部分不走 gsettings/portal 的应用看的是这个）
 
 set -u
 
-colors_file="$HOME/.cache/DankMaterialShell/dms-colors.json"
-state_file="$HOME/.local/state/dms-theme-sync"
+state_file="$HOME/.local/state/system-theme-sync"
 
-[ -f "$colors_file" ] || exit 0
-command -v jq >/dev/null 2>&1 || exit 0
-
-mode=$(jq -r '.mode' "$colors_file" 2>/dev/null)
+command -v noctalia >/dev/null 2>&1 || exit 0
+mode=$(noctalia msg theme-mode-get 2>/dev/null)
 case "$mode" in
 	light|dark) ;;
 	*)          exit 0 ;;
@@ -50,18 +46,15 @@ if command -v gsettings >/dev/null 2>&1; then
 	if [ "$mode" = dark ]; then
 		gtk_theme="${base_theme}-dark"
 		[ -d "/usr/share/themes/$gtk_theme" ] || gtk_theme="$base_theme"
-		color_scheme=prefer-dark
 		prefer_dark=1
 	else
 		gtk_theme="$base_theme"
-		color_scheme=default
 		prefer_dark=0
 	fi
 
 	gsettings set org.gnome.desktop.interface gtk-theme "$gtk_theme" 2>/dev/null
-	gsettings set org.gnome.desktop.interface color-scheme "$color_scheme" 2>/dev/null
 
-	# 只更新/插入这两个键，保留 DMS 自己写的 gtk-icon-theme-name 等其他设置
+	# 只更新/插入这两个键，保留 Noctalia gtk 模板写的其他设置
 	for d in "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"; do
 		mkdir -p "$d"
 		f="$d/settings.ini"

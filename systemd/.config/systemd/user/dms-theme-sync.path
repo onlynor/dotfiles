@@ -1,8 +1,0 @@
-[Unit]
-Description=Watch DMS session state for theme changes
-
-[Path]
-PathModified=%h/.cache/DankMaterialShell/dms-colors.json
-
-[Install]
-WantedBy=default.target

@@ -1,6 +1,0 @@
-[Unit]
-Description=Sync rofi and GTK theme with DMS light/dark mode
-
-[Service]
-Type=oneshot
-ExecStart=%h/.local/bin/dms-theme-sync

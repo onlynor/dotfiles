@@ -38,6 +38,10 @@ alacritty/.config/alacritty/themes/
 alacritty/.config/alacritty/alacritty.toml.backup.*
 alacritty/.config/alacritty/*.bak
 
+# --- Kitty ---
+# Noctalia 模板生成的配色（机器相关，派生文件）
+kitty/.config/kitty/themes/
+
 # --- Misc ---
 # 独立的 git 仓库，不作为本仓库的子模块管理
 config-files/

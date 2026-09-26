@@ -133,6 +133,11 @@ overview {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 environment {
   XDG_CURRENT_DESKTOP "niri"
+  // 让 Qt6 应用走 GTK 主题桥接（qt6-gtk-platformtheme），跟着
+  // Noctalia 的 gtk3/gtk4 模板 + system-theme-sync 维护好的
+  // gtk-theme / prefer-dark-theme 走，不用再单独维护一套 qt6ct 的
+  // 浅深色配置。
+  QT_QPA_PLATFORMTHEME "gtk3"
 }
 hotkey-overlay {
     skip-at-startup
@@ -236,7 +241,10 @@ recent-windows {
     }
 }
 
-// Include dms files
+// dms/*.kdl 是当年 DankMaterialShell 设置界面生成的 niri 配置片段（颜色/
+// 布局/alt-tab/光标/输入设备），DMS 已经不再使用，这些文件不会再被自动
+// 刷新，但内容仍然有效，继续保留、按需手动编辑即可。binds.kdl/outputs.kdl
+// 是我们自己维护的，走 stow 符号链接。
 include optional=true "dms/colors.kdl"
 include optional=true "dms/layout.kdl"
 include optional=true "dms/alttab.kdl"
@@ -244,3 +252,9 @@ include optional=true "dms/binds.kdl"
 include optional=true "dms/outputs.kdl"
 include optional=true "dms/cursor.kdl"
 include optional=true "dms/input.kdl"
+
+spawn-at-startup "noctalia"
+
+// Noctalia 主题模板生成的强调色（focus-ring/border/tab-indicator），随
+// 浅深色模式自动重写，不受 stow 管理。
+include optional=true "noctalia.kdl"

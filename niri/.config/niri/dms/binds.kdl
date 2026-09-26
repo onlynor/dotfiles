@@ -5,65 +5,58 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // === Application Launchers ===
-    Mod+T hotkey-overlay-title="Open Terminal" { spawn "alacritty"; }
+    // niri 自己的 PATH 里没有 ~/.local/bin（kitty 装在那），得写绝对路径
+    Mod+T hotkey-overlay-title="Open Terminal" { spawn "/home/matthew/.local/bin/kitty"; }
     Mod+Space hotkey-overlay-title="Application Launcher" {
-        spawn "dms" "ipc" "call" "spotlight" "toggle";
-    }
-    Alt+Space hotkey-overlay-title="Spotlight Bar" {
-        spawn "dms" "ipc" "call" "spotlight-bar" "toggle";
+        spawn "noctalia" "msg" "panel-toggle" "launcher";
     }
     Mod+D hotkey-overlay-title="Run an Application: rofi" { spawn "rofi" "-show" "drun"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" {
-        spawn "dms" "ipc" "call" "clipboard" "toggle";
-    }
-    Mod+M hotkey-overlay-title="Task Manager" {
-        spawn "dms" "ipc" "call" "processlist" "focusOrToggle";
+        spawn "noctalia" "msg" "panel-toggle" "clipboard";
     }
 
-    Super+X hotkey-overlay-title="Power Menu: Toggle" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
+    Super+X hotkey-overlay-title="Power Menu: Toggle" { spawn "noctalia" "msg" "panel-toggle" "session"; }
     Mod+S hotkey-overlay-title="Settings" {
-        spawn "dms" "ipc" "call" "settings" "focusOrToggle";
+        spawn "noctalia" "msg" "settings-toggle";
     }
     Mod+Y hotkey-overlay-title="Browse Wallpapers" {
-        spawn "dms" "ipc" "call" "dash" "toggle" "wallpaper";
+        spawn "noctalia" "msg" "panel-toggle" "wallpaper";
     }
-    Mod+N hotkey-overlay-title="Notification Center" { spawn "dms" "ipc" "call" "notifications" "toggle"; }
-    Mod+Shift+N hotkey-overlay-title="Notepad" { spawn "dms" "ipc" "call" "notepad" "toggle"; }
+    Mod+N hotkey-overlay-title="Notification Center" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
 
     // === Security ===
     Mod+Alt+L hotkey-overlay-title="Lock and Suspend" {
-        spawn-sh "dms ipc call lock lock && sleep 0.5 && systemctl suspend";
+        spawn "noctalia" "msg" "session" "lock-and-suspend";
     }
     Mod+Shift+E { quit; }
-    Ctrl+Alt+Delete hotkey-overlay-title="Task Manager" {
-        spawn "dms" "ipc" "call" "processlist" "focusOrToggle";
-    }
 
     // === Audio Controls ===
     XF86AudioRaiseVolume allow-when-locked=true {
-        spawn "dms" "ipc" "call" "audio" "increment" "3";
+        spawn "noctalia" "msg" "volume-up" "3";
     }
     XF86AudioLowerVolume allow-when-locked=true {
-        spawn "dms" "ipc" "call" "audio" "decrement" "3";
+        spawn "noctalia" "msg" "volume-down" "3";
     }
     XF86AudioMute allow-when-locked=true {
-        spawn "dms" "ipc" "call" "audio" "mute";
+        spawn "noctalia" "msg" "volume-mute";
     }
     XF86AudioMicMute allow-when-locked=true {
-        spawn "dms" "ipc" "call" "audio" "micmute";
+        spawn "noctalia" "msg" "mic-mute";
     }
     XF86AudioPause allow-when-locked=true {
-        spawn "dms" "ipc" "call" "mpris" "playPause";
+        spawn "noctalia" "msg" "media" "toggle";
     }
     XF86AudioPlay allow-when-locked=true {
-        spawn "dms" "ipc" "call" "mpris" "playPause";
+        spawn "noctalia" "msg" "media" "toggle";
     }
     XF86AudioPrev allow-when-locked=true {
-        spawn "dms" "ipc" "call" "mpris" "previous";
+        spawn "noctalia" "msg" "media" "previous";
     }
     XF86AudioNext allow-when-locked=true {
-        spawn "dms" "ipc" "call" "mpris" "next";
+        spawn "noctalia" "msg" "media" "next";
     }
+    // TODO: Ctrl+XF86Audio Raise/Lower used to nudge the active mpris player's own
+    // volume via dms; noctalia's msg CLI has no per-player volume command yet.
     Ctrl+XF86AudioRaiseVolume allow-when-locked=true {
         spawn "dms" "ipc" "call" "mpris" "increment" "3";
     }
@@ -73,10 +66,10 @@ binds {
 
     // === Brightness Controls ===
     XF86MonBrightnessUp allow-when-locked=true {
-       spawn "dms" "ipc" "call" "brightness" "increment" "5" "";
+       spawn "noctalia" "msg" "brightness-up" "5";
     }
     XF86MonBrightnessDown allow-when-locked=true {
-       spawn "dms" "ipc" "call" "brightness" "decrement" "5" "";
+       spawn "noctalia" "msg" "brightness-down" "5";
     }
 
     // === Window Management ===
@@ -86,7 +79,6 @@ binds {
     Mod+Shift+T { toggle-window-floating; }
     Mod+Shift+V { switch-focus-between-floating-and-tiling; }
     Mod+W { toggle-column-tabbed-display; }
-    Mod+Shift+W hotkey-overlay-title="Create window rule" { spawn "dms" "ipc" "call" "window-rules" "toggle"; }
 
     // === Focus Navigation ===
     Mod+Left  { focus-column-left; }
@@ -143,11 +135,6 @@ binds {
     Mod+Ctrl+Up   { move-column-to-workspace-up; }
     Mod+Ctrl+U         { move-column-to-workspace-down; }
     Mod+Ctrl+I         { move-column-to-workspace-up; }
-
-    // === Workspace Management ===
-    Ctrl+Shift+R hotkey-overlay-title="Rename Workspace" {
-        spawn "dms" "ipc" "call" "workspace-rename" "open";
-    }
 
     // === Move Workspaces ===
     Mod+Shift+Page_Down { move-workspace-down; }
@@ -214,19 +201,21 @@ binds {
     Mod+Shift+Equal { set-window-height "+10%"; }
 
     // === Screenshots ===
-    XF86Launch1 hotkey-overlay-title="Screenshot: Region" { spawn "dms" "screenshot"; }
-    Ctrl+XF86Launch1 hotkey-overlay-title="Screenshot: Full Screen" { spawn "dms" "screenshot" "full"; }
-    Alt+XF86Launch1 hotkey-overlay-title="Screenshot: Window" { spawn "dms" "screenshot" "window"; }
-    Print hotkey-overlay-title="Screenshot: Region" { spawn "dms" "screenshot"; }
-    Mod+Shift+S hotkey-overlay-title="Screenshot: Flameshot" {
-        spawn-sh "flameshot gui 2>/dev/null & sleep 0.15 && niri msg action move-window-to-floating";
+    XF86Launch1 hotkey-overlay-title="Screenshot: Region" { spawn "noctalia" "msg" "screenshot-region"; }
+    Ctrl+XF86Launch1 hotkey-overlay-title="Screenshot: Full Screen" { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    Alt+XF86Launch1 hotkey-overlay-title="Screenshot: Pick Window" { spawn "noctalia" "msg" "screenshot-fullscreen" "pick"; }
+    Print hotkey-overlay-title="Screenshot: Region" { spawn "noctalia" "msg" "screenshot-region"; }
+    // flameshot 在 niri/Wayland 下截的是走 portal 的静态画面，annotate 窗口还得
+    // 手动摘成浮动再自己调整大小，跟画面对不上、很割裂；换成 Noctalia 原生的
+    // 截图，默认聚焦在选区工具上，选完区域再进标注编辑器（笔刷等工具都在），
+    // 不会一松手就直接保存——这是 Noctalia 设置里 Screenshot > Annotation >
+    // "Edit Before Saving or Copying" 打开的效果（对应 settings.toml 里
+    // [shell.screenshot] annotate = true），不是命令行参数。
+    Mod+Shift+S hotkey-overlay-title="Screenshot: Region" {
+        spawn "noctalia" "msg" "screenshot-region";
     }
-    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen" { spawn "dms" "screenshot" "full"; }
-    Alt+Print hotkey-overlay-title="Screenshot: Window" { spawn "dms" "screenshot" "window"; }
-    // === Display Profiles ===
-    Mod+P hotkey-overlay-title="Cycle Display Profile" {
-        spawn "dms" "ipc" "outputs" "cycleProfile";
-    }
+    Ctrl+Print hotkey-overlay-title="Screenshot: Full Screen" { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    Alt+Print hotkey-overlay-title="Screenshot: Pick Window" { spawn "noctalia" "msg" "screenshot-fullscreen" "pick"; }
 
     // === System Controls ===
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
